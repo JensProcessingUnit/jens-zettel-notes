@@ -1,0 +1,4 @@
+project_id = "czdilqgaugtbqhgjlvdv"
+
+[functions.generate-zettelkasten]
+verify_jwt = false
