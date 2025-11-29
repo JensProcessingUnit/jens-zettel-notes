@@ -1,4 +1,4 @@
-# Welcome to your Lovable project
+# Welcome to Jen's ZettelCard Maker
 
 ## Project info
 
