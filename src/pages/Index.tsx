@@ -1,16 +1,52 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
-import { Loader2, Copy, Check, BookOpen } from "lucide-react";
+import { Loader2, Copy, Check, BookOpen, Save, LogOut, FolderOpen } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { CardHistory } from "@/components/CardHistory";
+import { SaveCardDialog } from "@/components/SaveCardDialog";
+import type { User, Session } from "@supabase/supabase-js";
 
 const Index = () => {
+  const navigate = useNavigate();
+  const [user, setUser] = useState<User | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
   const [sourceText, setSourceText] = useState("");
   const [cardContent, setCardContent] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [showSaveDialog, setShowSaveDialog] = useState(false);
+  const [showHistory, setShowHistory] = useState(false);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
+
+  useEffect(() => {
+    // Set up auth state listener
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        setSession(session);
+        setUser(session?.user ?? null);
+        
+        if (!session?.user) {
+          navigate("/auth");
+        }
+      }
+    );
+
+    // Check for existing session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setUser(session?.user ?? null);
+      
+      if (!session?.user) {
+        navigate("/auth");
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [navigate]);
 
   const handleGenerate = async () => {
     if (!sourceText.trim()) {
@@ -51,20 +87,69 @@ const Index = () => {
     }
   };
 
+  const handleSaveClick = () => {
+    if (!cardContent) {
+      toast.error("Generate a card first");
+      return;
+    }
+    setShowSaveDialog(true);
+  };
+
+  const handleCardSaved = () => {
+    setRefreshTrigger((prev) => prev + 1);
+  };
+
+  const handleCardSelect = (card: any) => {
+    setCardContent(card.content);
+    setSourceText(card.source_text);
+    setShowHistory(false);
+  };
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    navigate("/auth");
+  };
+
+  if (!user) {
+    return null;
+  }
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="border-b border-border bg-card">
         <div className="container mx-auto px-6 py-8">
-          <div className="flex items-center gap-3 mb-2">
-            <BookOpen className="w-8 h-8 text-primary" />
-            <h1 className="text-4xl font-serif font-semibold text-foreground">
-              Zettelkasten Card Generator
-            </h1>
+          <div className="flex items-center justify-between">
+            <div>
+              <div className="flex items-center gap-3 mb-2">
+                <BookOpen className="w-8 h-8 text-primary" />
+                <h1 className="text-4xl font-serif font-semibold text-foreground">
+                  Zettelkasten Card Generator
+                </h1>
+              </div>
+              <p className="text-muted-foreground text-lg">
+                High-density concept extraction for analog knowledge systems
+              </p>
+            </div>
+            <div className="flex items-center gap-3">
+              <Button
+                variant="outline"
+                onClick={() => setShowHistory(!showHistory)}
+                className="border-border"
+              >
+                <FolderOpen className="w-4 h-4 mr-2" />
+                {showHistory ? "Hide" : "Show"} History
+              </Button>
+              <Button
+                variant="outline"
+                onClick={handleSignOut}
+                className="border-border"
+              >
+                <LogOut className="w-4 h-4 mr-2" />
+                Sign Out
+              </Button>
+            </div>
           </div>
-          <p className="text-muted-foreground text-lg">
-            High-density concept extraction for analog knowledge systems
-          </p>
         </div>
       </header>
 
@@ -114,24 +199,35 @@ const Index = () => {
                 Zettelkasten Card
               </h2>
               {cardContent && (
-                <Button
-                  onClick={handleCopy}
-                  variant="outline"
-                  size="sm"
-                  className="border-border hover:bg-secondary"
-                >
-                  {copied ? (
-                    <>
-                      <Check className="w-4 h-4 mr-2" />
-                      Copied
-                    </>
-                  ) : (
-                    <>
-                      <Copy className="w-4 h-4 mr-2" />
-                      Copy
-                    </>
-                  )}
-                </Button>
+                <div className="flex gap-2">
+                  <Button
+                    onClick={handleSaveClick}
+                    variant="outline"
+                    size="sm"
+                    className="border-border hover:bg-secondary"
+                  >
+                    <Save className="w-4 h-4 mr-2" />
+                    Save
+                  </Button>
+                  <Button
+                    onClick={handleCopy}
+                    variant="outline"
+                    size="sm"
+                    className="border-border hover:bg-secondary"
+                  >
+                    {copied ? (
+                      <>
+                        <Check className="w-4 h-4 mr-2" />
+                        Copied
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="w-4 h-4 mr-2" />
+                        Copy
+                      </>
+                    )}
+                  </Button>
+                </div>
               )}
             </div>
 
@@ -152,6 +248,19 @@ const Index = () => {
             </Card>
           </div>
         </div>
+
+        {/* Card History Section */}
+        {showHistory && (
+          <Card className="max-w-7xl mx-auto mt-12 bg-card border-border p-8">
+            <h3 className="text-2xl font-serif font-semibold text-foreground mb-6">
+              Saved Cards
+            </h3>
+            <CardHistory
+              onCardSelect={handleCardSelect}
+              refreshTrigger={refreshTrigger}
+            />
+          </Card>
+        )}
 
         {/* Info Section */}
         <Card className="max-w-7xl mx-auto mt-12 bg-secondary/50 border-border p-8">
@@ -178,6 +287,15 @@ const Index = () => {
           </div>
         </Card>
       </main>
+
+      {/* Save Dialog */}
+      <SaveCardDialog
+        open={showSaveDialog}
+        onOpenChange={setShowSaveDialog}
+        cardContent={cardContent}
+        sourceText={sourceText}
+        onSaved={handleCardSaved}
+      />
     </div>
   );
 };
