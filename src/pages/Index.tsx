@@ -64,7 +64,7 @@ const Index = () => {
 
       if (data?.cardContent) {
         setCardContent(data.cardContent);
-        toast.success("Zettelkasten card generated successfully");
+        toast.success("Daily trend brief generated");
       } else {
         throw new Error("No card content received");
       }
@@ -124,11 +124,11 @@ const Index = () => {
               <div className="flex items-center gap-3 mb-2">
                 <BookOpen className="w-8 h-8 text-primary" />
                 <h1 className="text-4xl font-serif font-semibold text-foreground">
-                  Zettelkasten Card Generator
+                  Short-Form Trend Brief Generator
                 </h1>
               </div>
               <p className="text-muted-foreground text-lg">
-                High-density concept extraction for analog knowledge systems
+                Daily breakout pattern clustering for TikTok, Reels, and Shorts
               </p>
             </div>
             <div className="flex items-center gap-3">
@@ -160,7 +160,7 @@ const Index = () => {
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <h2 className="text-2xl font-serif font-semibold text-foreground">
-                Source Material
+                Brief Input
               </h2>
               <span className="text-sm text-muted-foreground">
                 {sourceText.length} characters
@@ -171,7 +171,7 @@ const Index = () => {
               <Textarea
                 value={sourceText}
                 onChange={(e) => setSourceText(e.target.value)}
-                placeholder="Paste your source text, concept, or abstract here. The AI will extract the core theoretical framework, experimental evidence, implications, and open questions into a structured Zettelkasten card format..."
+                placeholder="Add your niche, voice, and any recent observations (links, transcripts, creator notes, comments, saves). Example: 'Niche: fitness coaches for busy parents. Voice: direct, witty, no fluff. Sources: ...'."
                 className="min-h-[400px] font-sans text-base leading-relaxed resize-none focus-visible:ring-accent"
               />
             </Card>
@@ -184,10 +184,10 @@ const Index = () => {
               {isGenerating ? (
                 <>
                   <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                  Generating Card...
+                  Building Brief...
                 </>
               ) : (
-                "Extract → Generate Card"
+                "Generate Daily Trend Brief"
               )}
             </Button>
           </div>
@@ -196,7 +196,7 @@ const Index = () => {
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <h2 className="text-2xl font-serif font-semibold text-foreground">
-                Zettelkasten Card
+                Trend Brief + Swipe-File
               </h2>
               {cardContent && (
                 <div className="flex gap-2">
@@ -240,8 +240,8 @@ const Index = () => {
                 <div className="flex items-center justify-center h-full text-muted-foreground">
                   <div className="text-center space-y-2">
                     <BookOpen className="w-12 h-12 mx-auto opacity-40" />
-                    <p className="text-lg">Your generated card will appear here</p>
-                    <p className="text-sm">Max 150 words · 4-part structure</p>
+                    <p className="text-lg">Your daily trend brief will appear here</p>
+                    <p className="text-sm">Includes clusters, native vs portable patterns, and 3 original concepts</p>
                   </div>
                 </div>
               )}
@@ -265,24 +265,24 @@ const Index = () => {
         {/* Info Section */}
         <Card className="max-w-7xl mx-auto mt-12 bg-secondary/50 border-border p-8">
           <h3 className="text-xl font-serif font-semibold text-foreground mb-4">
-            Card Structure
+            What You Get
           </h3>
           <div className="grid md:grid-cols-4 gap-6 text-sm">
             <div>
-              <h4 className="font-semibold text-primary mb-2">1. Theory/Concept</h4>
-              <p className="text-muted-foreground">Core axiom, domain context, conceptual shortcuts</p>
+              <h4 className="font-semibold text-primary mb-2">1. Breakout Snapshot</h4>
+              <p className="text-muted-foreground">Fast read on what is surging in your niche right now</p>
             </div>
             <div>
-              <h4 className="font-semibold text-accent mb-2">2. Experiment/Model</h4>
-              <p className="text-muted-foreground">Supporting evidence, methodological critique</p>
+              <h4 className="font-semibold text-accent mb-2">2. Cluster Dashboard</h4>
+              <p className="text-muted-foreground">Hooks, shots, captions, soundtrack, pacing, CTA, platform fit</p>
             </div>
             <div>
-              <h4 className="font-semibold text-primary mb-2">3. Implications/Utility</h4>
-              <p className="text-muted-foreground">High-level impact, transfer functions</p>
+              <h4 className="font-semibold text-primary mb-2">3. Platform Strategy</h4>
+              <p className="text-muted-foreground">Native platform ideas vs portable cross-platform plays</p>
             </div>
             <div>
-              <h4 className="font-semibold text-accent mb-2">4. Open Questions</h4>
-              <p className="text-muted-foreground">Unanswered queries, connection bridges</p>
+              <h4 className="font-semibold text-accent mb-2">4. Original Concepts</h4>
+              <p className="text-muted-foreground">Three fresh concepts matched to your tone, plus next tests</p>
             </div>
           </div>
         </Card>
