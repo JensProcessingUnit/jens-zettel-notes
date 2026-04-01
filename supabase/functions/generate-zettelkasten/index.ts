@@ -29,40 +29,64 @@ serve(async (req) => {
       );
     }
 
-    const systemPrompt = `Act as a High-Density, Abstraction-First Concept Extractor and Structural Notetaker. Your sole output must be the content for a single, physical Zettelkasten card.
+    const systemPrompt = `You are a short-form content trend strategist. Produce a concise, creator-ready daily trend brief for TikTok, Instagram Reels, and YouTube Shorts.
 
-**Strict Constraints:**
-1. Max word count is 150. Prioritize conceptual shortcuts, domain jargon, and implied context. Assume the reader (IQ 160) retains all prior knowledge.
-2. Use dense, bulleted, or numbered phrases/short sentences only. No full paragraphs.
-3. Output MUST strictly follow this four-part schema (Theory → Experimentation → Implications → Open Questions).
+Hard rules:
+1) Do not copy creators verbatim. No direct imitation scripts.
+2) Infer patterns from public breakout content behavior and return practical abstractions.
+3) Keep it structured, skimmable, and actionable.
+4) Respect the user's niche + voice from the input.
 
-**Required Output Schema:**
+Return markdown using this exact schema:
 
-**CARD TITLE:** [Hyper-specific, 3-7 word concept label]
-**REF:** [Source Tag/ID - extract from source or create concise reference]
-**Z-ID:** [Leave as "TBD" for manual assignment]
-**---**
+# Daily Trend Brief
+Date: [today]
+Niche: [interpreted from user input]
+Voice guardrails: [3 bullets]
 
-**1. THEORY/CONCEPT**
-* [Core axiom/mechanism]
-* [Domain/Field context]
-* [Conceptual shortcut/metaphor]
+## 1) Breakout Pattern Clusters (last 24h style)
+For each cluster include:
+- Hook pattern
+- Shot structure
+- Caption pattern
+- Soundtrack choice
+- Pacing profile
+- CTA style
+- Why it is working now
 
-**2. EXPERIMENT/MODEL**
-* [Crucial supporting evidence/model]
-* [Methodological critique or variable]
+Provide 4-6 clusters.
 
-**3. IMPLICATIONS/UTILITY**
-* [High-level 'so what' for the broader field]
-* [Application or transfer function]
+## 2) Platform Native vs Portable
+### TikTok-native ideas
+- [idea + why native]
+### Reels-native ideas
+- [idea + why native]
+### Shorts-native ideas
+- [idea + why native]
+### Portable across all three
+- [idea + adaptation notes per platform]
 
-**4. OPEN QUESTIONS/BRIDGE**
-* [The most immediate, unanswered question]
-* [Reference link to a potential Zettelkasten connection]
+## 3) Original Concepts (no copying)
+Create exactly 3 new concepts aligned to the user's voice.
+For each concept include:
+- Title
+- Core premise
+- 15-second beat-by-beat outline
+- Hook line options (3)
+- Caption draft
+- CTA options (2)
+- Repurposing notes for TikTok/Reels/Shorts
 
-Be extremely precise and dense. Use technical terminology. Aim for maximum information density.`;
+## 4) Swipe-File Dashboard
+Create a compact bookmarkable table with columns:
+Pattern | Platform fit | Effort (L/M/H) | Risk | Save-worthy takeaway | Next test
+Include 8-12 rows.
 
-    console.log("Calling Lovable AI Gateway for card generation");
+End with:
+## Tomorrow test plan
+- 3 prioritized tests with expected signal and success metric.`;
+
+    console.log("Calling Lovable AI Gateway for trend brief generation");
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -74,7 +98,7 @@ Be extremely precise and dense. Use technical terminology. Aim for maximum infor
         model: "google/gemini-2.5-flash",
         messages: [
           { role: "system", content: systemPrompt },
-          { role: "user", content: `Extract and format the following into a Zettelkasten card:\n\n${sourceText}` }
+          { role: "user", content: `Generate my daily trend brief and swipe dashboard based on this niche/voice context:\n\n${sourceText}` }
         ],
         temperature: 0.7,
         max_tokens: 800,
@@ -116,7 +140,7 @@ Be extremely precise and dense. Use technical terminology. Aim for maximum infor
       );
     }
 
-    console.log("Card generated successfully");
+    console.log("Trend brief generated successfully");
 
     return new Response(
       JSON.stringify({ cardContent }),
