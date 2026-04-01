@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
-import { Loader2, Copy, Check, BookOpen, Save, LogOut, FolderOpen } from "lucide-react";
+import { Loader2, Copy, Check, Flame, Save, LogOut, FolderOpen } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { CardHistory } from "@/components/CardHistory";
@@ -50,7 +50,7 @@ const Index = () => {
 
   const handleGenerate = async () => {
     if (!sourceText.trim()) {
-      toast.error("Please enter source material to extract");
+      toast.error("Please enter your niche and voice context");
       return;
     }
 
@@ -64,13 +64,13 @@ const Index = () => {
 
       if (data?.cardContent) {
         setCardContent(data.cardContent);
-        toast.success("Zettelkasten card generated successfully");
+        toast.success("Daily trend brief generated");
       } else {
-        throw new Error("No card content received");
+        throw new Error("No brief content received");
       }
     } catch (error: any) {
-      console.error("Error generating card:", error);
-      toast.error(error.message || "Failed to generate card");
+      console.error("Error generating brief:", error);
+      toast.error(error.message || "Failed to generate brief");
     } finally {
       setIsGenerating(false);
     }
@@ -89,7 +89,7 @@ const Index = () => {
 
   const handleSaveClick = () => {
     if (!cardContent) {
-      toast.error("Generate a card first");
+      toast.error("Generate a brief first");
       return;
     }
     setShowSaveDialog(true);
@@ -122,13 +122,13 @@ const Index = () => {
           <div className="flex items-center justify-between">
             <div>
               <div className="flex items-center gap-3 mb-2">
-                <BookOpen className="w-8 h-8 text-primary" />
+                <Flame className="w-8 h-8 text-primary" />
                 <h1 className="text-4xl font-serif font-semibold text-foreground">
-                  Zettelkasten Card Generator
+                  Daily Short-Form Trend Brief
                 </h1>
               </div>
               <p className="text-muted-foreground text-lg">
-                High-density concept extraction for analog knowledge systems
+                Breakout pattern clustering for TikTok, Reels, and YouTube Shorts
               </p>
             </div>
             <div className="flex items-center gap-3">
@@ -160,7 +160,7 @@ const Index = () => {
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <h2 className="text-2xl font-serif font-semibold text-foreground">
-                Source Material
+                Niche + Voice Inputs
               </h2>
               <span className="text-sm text-muted-foreground">
                 {sourceText.length} characters
@@ -171,7 +171,7 @@ const Index = () => {
               <Textarea
                 value={sourceText}
                 onChange={(e) => setSourceText(e.target.value)}
-                placeholder="Paste your source text, concept, or abstract here. The AI will extract the core theoretical framework, experimental evidence, implications, and open questions into a structured Zettelkasten card format..."
+                placeholder="Paste your niche, audience, tone/voice notes, constraints, and any recent winners/losers. Example: niche = fitness coaches for busy moms; voice = calm, direct, data-backed; avoid hype language; CTA style = low-pressure."
                 className="min-h-[400px] font-sans text-base leading-relaxed resize-none focus-visible:ring-accent"
               />
             </Card>
@@ -184,10 +184,10 @@ const Index = () => {
               {isGenerating ? (
                 <>
                   <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                  Generating Card...
+                  Generating Brief...
                 </>
               ) : (
-                "Extract → Generate Card"
+                "Analyze → Build Daily Brief"
               )}
             </Button>
           </div>
@@ -196,7 +196,7 @@ const Index = () => {
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <h2 className="text-2xl font-serif font-semibold text-foreground">
-                Zettelkasten Card
+                Trend Brief + Swipe Dashboard
               </h2>
               {cardContent && (
                 <div className="flex gap-2">
@@ -239,9 +239,9 @@ const Index = () => {
               ) : (
                 <div className="flex items-center justify-center h-full text-muted-foreground">
                   <div className="text-center space-y-2">
-                    <BookOpen className="w-12 h-12 mx-auto opacity-40" />
-                    <p className="text-lg">Your generated card will appear here</p>
-                    <p className="text-sm">Max 150 words · 4-part structure</p>
+                    <Flame className="w-12 h-12 mx-auto opacity-40" />
+                    <p className="text-lg">Your daily trend brief will appear here</p>
+                    <p className="text-sm">Includes clusters, portability map, 3 original concepts</p>
                   </div>
                 </div>
               )}
@@ -265,24 +265,20 @@ const Index = () => {
         {/* Info Section */}
         <Card className="max-w-7xl mx-auto mt-12 bg-secondary/50 border-border p-8">
           <h3 className="text-xl font-serif font-semibold text-foreground mb-4">
-            Card Structure
+            Brief Structure
           </h3>
-          <div className="grid md:grid-cols-4 gap-6 text-sm">
+          <div className="grid md:grid-cols-3 gap-6 text-sm">
             <div>
-              <h4 className="font-semibold text-primary mb-2">1. Theory/Concept</h4>
-              <p className="text-muted-foreground">Core axiom, domain context, conceptual shortcuts</p>
+              <h4 className="font-semibold text-primary mb-2">1. Breakout Clusters</h4>
+              <p className="text-muted-foreground">Hook, shot structure, caption patterns, soundtrack choices, pacing, CTAs</p>
             </div>
             <div>
-              <h4 className="font-semibold text-accent mb-2">2. Experiment/Model</h4>
-              <p className="text-muted-foreground">Supporting evidence, methodological critique</p>
+              <h4 className="font-semibold text-accent mb-2">2. Native vs Portable</h4>
+              <p className="text-muted-foreground">Which ideas are platform-native vs transferable across all three platforms</p>
             </div>
             <div>
-              <h4 className="font-semibold text-primary mb-2">3. Implications/Utility</h4>
-              <p className="text-muted-foreground">High-level impact, transfer functions</p>
-            </div>
-            <div>
-              <h4 className="font-semibold text-accent mb-2">4. Open Questions</h4>
-              <p className="text-muted-foreground">Unanswered queries, connection bridges</p>
+              <h4 className="font-semibold text-primary mb-2">3. Original Concepts</h4>
+              <p className="text-muted-foreground">Three fresh ideas adapted to your voice, with no direct copying</p>
             </div>
           </div>
         </Card>
